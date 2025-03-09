@@ -1,0 +1,39 @@
+services:
+  tapuznet-db:
+    image: postgres:17
+    container_name: tapuznet-db
+    environment:
+      - POSTGRES_USER=tapuznet
+      - POSTGRES_PASSWORD=tapuznet
+      - POSTGRES_DB=tapuznet-db
+    volumes:
+      - tapuznet-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - tapuznet
+
+  tapuznet-redis:
+    image: redis:latest
+    restart: always
+    command:
+      - 'redis-server'
+      - '--databases 3'
+      - '--save 900 1'
+      - '--save 300 10'
+      - '--save 60 10000'
+    container_name: tapuznet-redis
+    volumes:
+      - tapuznet-redis:/data
+    ports:
+      - "6379:6379"
+    expose:
+      - 6379
+
+networks:
+  tapuznet:
+    driver: bridge
+
+volumes:
+  tapuznet-db:
+  tapuznet-redis:
